@@ -12,14 +12,23 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "rating")
 public class Rating {
+    /**
+     * Идентификатор товара
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rating_id", nullable = false)
     private Long id;
 
+    /**
+     * Количество товара
+     */
     @Column(name = "count", nullable = false)
     private Integer count;
 
+    /**
+     * Средняя оценка товара
+     */
     @Column(name = "rate", nullable = false)
     private BigDecimal rate;
 

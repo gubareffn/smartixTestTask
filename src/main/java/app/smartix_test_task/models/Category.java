@@ -9,11 +9,17 @@ import lombok.Setter;
 @Entity
 @Table(name = "category")
 public class Category {
+    /**
+     * Идентификатор категории
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id", nullable = false)
     private Long id;
 
+    /**
+     * Наименование категории
+     */
     @Column(name = "name", nullable = false)
     private String name;
 

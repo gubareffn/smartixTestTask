@@ -1,7 +1,8 @@
-package app.smartix_test_task.service;
+package app.smartix_test_task.service.impl;
 
 import app.smartix_test_task.models.Category;
 import app.smartix_test_task.repository.CategoryRepository;
+import app.smartix_test_task.service.CategoryService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
+    /**
+     * Получения списка всех уникальных категорий
+     */
     @Override
     public List<Category> findUniqueCategories() {
         return categoryRepository.findAllUniqueCategories();

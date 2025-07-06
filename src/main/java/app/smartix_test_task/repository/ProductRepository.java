@@ -13,8 +13,6 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-    boolean existsById(Long id);
-
     @Query("SELECT p FROM Product p JOIN FETCH p.category WHERE p.id = :id")
     Product findById(@Param("id") Long id);
 
