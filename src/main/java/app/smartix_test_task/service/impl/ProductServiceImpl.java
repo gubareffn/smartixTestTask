@@ -76,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
         }
         savedProduct.setCategory(existingCategory);
 
-        // Обновление или создание рейтинга
+        // Обновление или создание рейтинга. Если рейтинг уже есть - обновляем
         if (productDto.getRating() != null) {
             Rating rating;
             if (savedProduct.getRating() != null)
@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * Получения списка всех товаров с поддержкой пагинации
+     * Получение списка всех товаров с поддержкой пагинации
      */
     @Override
     public Page<Product> getAllProducts(Pageable pageable) {

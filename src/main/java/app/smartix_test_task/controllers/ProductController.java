@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -38,8 +37,8 @@ public class ProductController {
     @Tag(name = "Фильтрация товаров по стоимости",
             description = "Возвращает список товаров со стоимостью в указанном диапазоне")
     @GetMapping("/filter")
-    public ResponseEntity<Page<Product>> getAllProductsSortedByPrice(@RequestParam @Parameter(description = "Нижняя граница цены") BigDecimal minPrice,
-                                                                     @RequestParam @Parameter(description = "Верхняя граница цены") BigDecimal maxPrice,
+    public ResponseEntity<Page<Product>> getAllProductsSortedByPrice(@RequestParam(required = false)  @Parameter(description = "Нижняя граница цены") BigDecimal minPrice,
+                                                                     @RequestParam(required = false)  @Parameter(description = "Верхняя граница цены") BigDecimal maxPrice,
                                                                      @RequestParam(defaultValue = "0") @Parameter(description = "Номер страницы") int page,
                                                                      @RequestParam(defaultValue = "10") @Parameter(description = "Число элементов") int size) {
         return new ResponseEntity<>(productServiceImpl.getAllProductsByPriceRange(minPrice, maxPrice, PageRequest.of(page, size)), HttpStatus.OK);
@@ -63,7 +62,6 @@ public class ProductController {
                                                                           @RequestParam(defaultValue = "0") @Parameter(description = "Номер страницы") int page,
                                                                           @RequestParam(defaultValue = "10") @Parameter(description = "Число элементов")int size) {
         List<Sort.Order> orders = new ArrayList<>();
-
         // Сортируем по цене в зависимости от заданного направления "asc"/desc
         if (priceDirection != null && priceDirection.equalsIgnoreCase("asc")) {
             orders.add(Sort.Order.asc("price"));
