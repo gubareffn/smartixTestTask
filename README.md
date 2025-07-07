@@ -30,7 +30,7 @@
 | GET | `/api/products/{id}` | - | - | Получить товар по ID |
 | GET | `/api/products/` | `page`, `size` | - | Получить все товары (с пагинацией) |
 | GET | `/api/products/filter` | `page`, `size`, `minPrice`, `maxPrice` | - | Получить все товары (с пагинацией и фильтрацией) |
-| GET | `/api/category` | `categoryName`, `page`, `size` | - | Получить товары по категории |
+| GET | `/api/products/category` | `categoryName`, `page`, `size` | - | Получить товары по категории |
 | GET | `/api/products/sort` |`page`, `size`, `priceDirection`, `categoryDirection`| - | Получить отсортированный список товаров по категории лио цене|
 | PUT | `/api/products/update` | - | JSON товара | Обновить товар |
 | DELETE | `/api/products/delete/{id}` | - | - | Удалить товар |
