@@ -11,8 +11,8 @@ import app.smartix_test_task.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
@@ -31,8 +31,10 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * Импорт товаров с внешнего апи. При повторном импорте данные обновляются
+     * Реализован планировщик. Каждые 30 минут данные синхронизируются с внешним апи
      */
     @Override
+    @Scheduled(fixedRate = 30 * 60 * 1000)
     public void importProducts() {
         ProductDto[] products = restClient.get()
                 .uri("/products")
@@ -52,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     public void saveProduct(ProductDto productDto) {
         Product savedProduct;
         if (productDto.getId() != null && productDto.getId() != 0) {
-            savedProduct = productRepository.findById(productDto.getId());
+            savedProduct = productRepository.findByTitle(productDto.getTitle());
             if (savedProduct == null) {
                 savedProduct = new Product();
             }
@@ -124,6 +126,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> getAllProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
         return productRepository.sortByPrice(minPrice, maxPrice, pageable);
+    }
+
+    /**
+     * Получения списка товаров отсортированных по цене или категории в заданном направлении с поддержкой пагинации
+     * @param sort параметры сортировки и пагинации
+     */
+    @Override
+    public Page<Product> getAllProductsSorted(Pageable sort) {
+        return productRepository.findAll(sort);
     }
 
     /**

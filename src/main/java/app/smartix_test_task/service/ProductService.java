@@ -53,4 +53,10 @@ public interface ProductService {
      * @param categoryName наименование категории
      */
     Page<Product> getAllProductsByCategory(String categoryName, Pageable pageable);
+
+    /**
+     * Получения списка товаров отсортированных по цене или категории в заданном направлении с поддержкой пагинации
+     * @param sort параметры сортировки и пагинации
+     */
+    Page<Product> getAllProductsSorted(Pageable sort);
 }

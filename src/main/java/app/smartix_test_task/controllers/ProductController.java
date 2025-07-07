@@ -7,11 +7,16 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -32,7 +37,7 @@ public class ProductController {
 
     @Tag(name = "Фильтрация товаров по стоимости",
             description = "Возвращает список товаров со стоимостью в указанном диапазоне")
-    @GetMapping("/price-filter")
+    @GetMapping("/filter")
     public ResponseEntity<Page<Product>> getAllProductsSortedByPrice(@RequestParam @Parameter(description = "Нижняя граница цены") BigDecimal minPrice,
                                                                      @RequestParam @Parameter(description = "Верхняя граница цены") BigDecimal maxPrice,
                                                                      @RequestParam(defaultValue = "0") @Parameter(description = "Номер страницы") int page,
@@ -47,6 +52,33 @@ public class ProductController {
                                                                       @RequestParam(defaultValue = "0") @Parameter(description = "Номер страницы") int page,
                                                                       @RequestParam(defaultValue = "10") @Parameter(description = "Число элементов")int size) {
         return new ResponseEntity<>(productServiceImpl.getAllProductsByCategory(categoryName, PageRequest.of(page, size)), HttpStatus.OK);
+    }
+
+    @Tag(name = "Сортировка товаров по категории и цене",
+            description = "Сортировка товаров сразу по двум полям (цена и название категории) " +
+                    "с указанием отдельного направления для каждого из этих полей (возрастание/убывание)")
+    @GetMapping("/sort")
+    public ResponseEntity<Page<Product>> getAllProductsByCategoryNameSort(@RequestParam(required = false) @Parameter(description = "Направление сортировки 'asc'/ 'desc'") String priceDirection,
+                                                                          @RequestParam(required = false) @Parameter(description = "Направление сортировки 'asc'/ 'desc'") String categoryDirection,
+                                                                          @RequestParam(defaultValue = "0") @Parameter(description = "Номер страницы") int page,
+                                                                          @RequestParam(defaultValue = "10") @Parameter(description = "Число элементов")int size) {
+        List<Sort.Order> orders = new ArrayList<>();
+
+        // Сортируем по цене в зависимости от заданного направления "asc"/desc
+        if (priceDirection != null && priceDirection.equalsIgnoreCase("asc")) {
+            orders.add(Sort.Order.asc("price"));
+        } else if (priceDirection != null && priceDirection.equalsIgnoreCase("desc")) {
+            orders.add(Sort.Order.desc("price"));
+        }
+        // Сортируем по категории в зависимости от заданного направления "asc"/desc
+        if (categoryDirection != null && categoryDirection.equalsIgnoreCase("asc")) {
+            orders.add(Sort.Order.asc("category"));
+        }  else if (categoryDirection != null && categoryDirection.equalsIgnoreCase("desc")) {
+            orders.add(Sort.Order.desc("category"));
+        }
+
+        Pageable pageRequest = PageRequest.of(page, size, Sort.by(orders));
+        return new ResponseEntity<>(productServiceImpl.getAllProductsSorted(pageRequest), HttpStatus.OK);
     }
 
     @Tag(name = "Получение товара по ID ",
